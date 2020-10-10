@@ -9,7 +9,7 @@ import {
   CSidebarNavTitle,
   CSidebarMinimizer,
   CSidebarNavDropdown,
-  CSidebarNavItem,
+  CSidebarNavItem, CCardText
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
@@ -27,16 +27,7 @@ const TheSidebar = () => {
       onShowChange={(val) => dispatch({type: 'set', sidebarShow: val })}
     >
       <CSidebarBrand className="d-md-down-none" to="/">
-        <CIcon
-          className="c-sidebar-brand-full"
-          name="logo-negative"
-          height={35}
-        />
-        <CIcon
-          className="c-sidebar-brand-minimized"
-          name="sygnet"
-          height={35}
-        />
+        <CCardText>Scheduler</CCardText>
       </CSidebarBrand>
       <CSidebarNav>
 

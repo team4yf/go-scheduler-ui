@@ -8,21 +8,28 @@ import {
   CCol,
   CDataTable,
   CRow,
+  CButton,
+  CButtonGroup,
   CPagination
 } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { freeSet } from '@coreui/icons'
+
 
 import jobsData from './JobsData'
-
 const getBadge = status => {
   switch (status) {
-    case 'Active': return 'success'
-    case 'Inactive': return 'secondary'
-    case 'Pending': return 'warning'
-    case 'Banned': return 'danger'
+    case 1: return 'success'
+    case 0: return 'danger'
     default: return 'primary'
   }
 }
-
+const getStatus = status => {
+  switch (status) {
+    case 1: return 'Running'
+    case 0: return 'Paused'
+  }
+}
 const Jobs = () => {
   const history = useHistory()
   const queryPage = useLocation().search.match(/page=([0-9]+)/, '')
@@ -30,7 +37,7 @@ const Jobs = () => {
   const [page, setPage] = useState(currentPage)
 
   const pageChange = newPage => {
-    currentPage !== newPage && history.push(`/users?page=${newPage}`)
+    currentPage !== newPage && history.push(`/jobs?page=${newPage}`)
   }
 
   useEffect(() => {
@@ -49,30 +56,64 @@ const Jobs = () => {
           <CDataTable
             items={jobsData}
             fields={[
-              { key: 'name', _classes: 'font-weight-bold' },
-              'registered', 'role', 'status'
+              { key: 'code', _classes: 'font-weight-bold' },
+              'cron', 'executeType', 'url', 'status',
+              {
+                key: 'actions',
+                label: 'Actions',
+                _style: { width: '15%' },
+                sorter: false,
+                filter: false
+              }
             ]}
             hover
             striped
-            itemsPerPage={5}
+            itemsPerPage={20}
             activePage={page}
             clickableRows
-            onRowClick={(item) => history.push(`/users/${item.id}`)}
+            // onRowClick={(item) => history.push(`/jobs/${item.id}`)}
             scopedSlots = {{
               'status':
                 (item)=>(
                   <td>
                     <CBadge color={getBadge(item.status)}>
-                      {item.status}
+                      {getStatus(item.status)}
                     </CBadge>
                   </td>
-                )
+                ),
+              'actions':
+                (item, index)=>{
+                  return (
+                    <td className="py-2">
+                      <CButtonGroup>
+                      <CButton
+                        color="primary"
+                        variant="outline"
+                        size="sm"
+                        onClick={()=>{ alert(1)}}
+                      >
+                        {
+                          item.status == 1? <CIcon size='sm' content={freeSet['cilMediaPause']}></CIcon>: <CIcon size='sm' name={freeSet['cilMediaPlay']}></CIcon>
+                        }
+                      </CButton>
+                      <CButton
+                        color="primary"
+                        variant="outline"
+                        size="sm"
+                        onClick={()=>{ alert(2)}}
+                      >
+                         <CIcon size={'sm'} content={freeSet['cilBolt']} />
+                      </CButton>
+                      </CButtonGroup>
+                    </td>
+                    )
+                },
             }}
           />
           <CPagination
             activePage={page}
             onActivePageChange={pageChange}
-            pages={5}
+            pages={Math.ceil(jobsData.length/20)}
             doubleArrows={false} 
             align="center"
           />
