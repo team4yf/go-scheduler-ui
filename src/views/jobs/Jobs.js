@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import {
   CBadge,
@@ -15,6 +15,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import { freeSet } from '@coreui/icons'
 
+import JobForm from './JobForm'
 
 import jobsData from './JobsData'
 const getBadge = status => {
@@ -35,22 +36,44 @@ const Jobs = () => {
   const queryPage = useLocation().search.match(/page=([0-9]+)/, '')
   const currentPage = Number(queryPage && queryPage[1] ? queryPage[1] : 1)
   const [page, setPage] = useState(currentPage)
+  const [modal, setModal] = useState(false);
+
+  const onClose = ()=>{
+    setModal(!modal);
+  }
 
   const pageChange = newPage => {
     currentPage !== newPage && history.push(`/jobs?page=${newPage}`)
   }
+
+  const data = useMemo(()=>{
+    return {
+        show: modal,
+        onClose,
+
+    }
+  },[modal, onClose])
 
   useEffect(() => {
     currentPage !== page && setPage(currentPage)
   }, [currentPage, page])
 
   return (
+    <>
+    <JobForm 
+      props={data}/>
     <CRow>
       <CCol xl={12}>
         <CCard>
           <CCardHeader>
-            Jobs
-            <small className="text-muted"> list</small>
+            Jobs &nbsp;
+            <CButton
+              color="primary"
+              size="sm"
+              onClick={onClose}
+            >
+              Create
+            </CButton>
           </CCardHeader>
           <CCardBody>
           <CDataTable
@@ -121,6 +144,7 @@ const Jobs = () => {
         </CCard>
       </CCol>
     </CRow>
+    </>
   )
 }
 
